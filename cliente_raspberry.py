@@ -4,7 +4,7 @@ import requests
 import json
 
 # Configurações
-SERVER_URL = "http://192.168.1.7:5000/processar_voz"  # Substitua pelo IP do computador
+SERVER_URL = "http://192.168.1.3:5000/processar_voz"  # Substitua pelo IP do computador
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 

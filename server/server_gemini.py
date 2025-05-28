@@ -13,10 +13,16 @@ model = genai.GenerativeModel('gemini-2.0-flash')  # Você pode usar 'gemini-1.0
 @app.route('/processar_voz', methods=['POST'])
 def processar_voz():
     dados = request.json
+
+    if not dados or 'texto' not in dados:
+        return jsonify({"resposta": "Dados inválidos", "status": "error"}), 400
+    
+    # 2. Extração do texto recebido
     texto_recebido = dados.get('texto', '').strip()
     
     if not texto_recebido:
         return jsonify({"resposta": "Nenhum texto recebido", "status": "error"}), 400
+    
     
     print(f"Texto recebido: {texto_recebido}")
 

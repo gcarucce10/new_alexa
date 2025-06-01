@@ -1,0 +1,9 @@
+    - (search)
+        - Descrição : Essa ação é responsável por buscar informações na internet, quando o usuário fizer uma pergunta que você não souber a resposta ou que precise de pesquisa essa é a ação correta.
+        - Uso : search --query ('termo de pesquisa')
+            - --query : O termo que o usuário quer pesquisar na internet
+        - Exemplos :
+            - Para pesquisar sobre um assunto : search --query 'inteligência artificial'
+            - Para buscar informações sobre um artista : search --query 'Beyoncé'
+            - Para procurar notícias sobre um evento : search --query 'últimas notícias sobre tecnologia'
+            

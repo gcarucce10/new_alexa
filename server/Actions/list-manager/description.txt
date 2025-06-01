@@ -1,0 +1,14 @@
+    - (list-manager)
+        - Descrição : Essa ação é responsável por gerenciar listas de itens, como listas de compras, tarefas ou qualquer outro tipo de lista que o usuário queira criar ou gerenciar.
+        - Uso :
+            list-manager --option (list/list-items/create/remove/save) --name ('nome do assunto') --item ('nome do item')
+            - --option : O que o usuário quer que você faça, pode ser listar listas (list), listar itens de uma lista (list-items), remover uma lista (remove), criar uma lista (create) ou salvar um item na lista (save)
+            - --name : Nome da lista ou assunto que o usuário quer gerenciar
+            - --item : Nome do item que o usuário quer salvar na lista (apenas para a opção save)
+        - Exemplo : 
+            - Para listar as listas existentes: list-manager --option list
+            - Para listar os itens de uma lista: list-manager --option list-items --name 'nome do assunto'
+            - Para remover uma lista: list-manager --option remove --name 'nome do assunto'
+            - Para criar uma lista: list-manager --option create --name 'nome do assunto'
+            - Para salvar um item na lista: list-manager --option save --name 'nome do assunto' --item 'nome do item'
+            - Para remover um ite da lista: list-manager --option remove --name 'nome do assunto' --item 'nome do item'

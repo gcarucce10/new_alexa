@@ -1,0 +1,9 @@
+    - (weather)
+        - Descrição : Essa ação é responsável por fornecer informações sobre o clima, quando o usuário fizer menção de clima ou previsão do tempo essa é a ação correta.
+        - Uso : weather --option (current/forecast) --location ('nome da cidade')
+            - --option : O que o usuário quer que você faça, pode ser previsão do tempo atual (current) ou previsão do tempo para os próximos dias (forecast)
+            - --location : Nome da cidade para a qual o usuário quer saber a previsão do tempo
+        - Exemplos :
+            - Para obter a previsão do tempo atual : weather --option current --location 'São Paulo'
+            - Para obter a previsão do tempo para os próximos dias : weather --option forecast --location 'Rio de Janeiro'
+            

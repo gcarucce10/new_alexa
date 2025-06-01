@@ -1,0 +1,37 @@
+Formato JSON:
+{
+    "text": 
+    "actions":
+}
+
+Exemplos:
+{
+    "text": "Olá! Como posso ajudar você hoje?",
+    "actions": []
+}
+
+{
+    "text": "A previsão do tempo para São Paulo é de sol com algumas nuvens.",
+    "actions": [
+        "weather",
+        "--option",
+        "current",
+        "--location",
+        "São Paulo"
+    ]
+}
+
+{
+    "text": "Vou tocar a música 'Imagine' do John Lennon.",
+    "actions": [
+        "music",
+        "--name",
+        "Imagine",
+        "--category",
+        "mus", 
+        "--option",
+        "play"
+    ]
+}
+
+O prompt do usuário será fornecido a seguir :

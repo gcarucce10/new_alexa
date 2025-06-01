@@ -1,54 +1,88 @@
 import google.generativeai as genai
-import AI_agent
+from AI_agent import IA_Agent
 import json
 
 # Define o caminho para o arquivo de pré-prompt
-prompt_file = '/AI/prompts/VirtualAssistant.txt'  # Caminho para o arquivo de pré-prompt
+prompt_file = '/prompts/Current_Prompt.txt'  # Caminho para o arquivo de pré-prompt
 
-class GeminiAgent(AI_agent):
+class DefaultAnswer:
+    text: str
+    actions: list[str]
 
-    def __init__(self, api_key: str, model: str = 'gemini-2.5-flash') -> None:
-        
+class GeminiAgent(IA_Agent):
+
+    def __init__(self, api_key: str, model_name: str = 'gemini-2.0-flash', prompt_file_path: str = prompt_file) -> None:
         """
-        Initializes the Gemini AI agent with the provided API key.
+        Initializes the Gemini AI agent with the provided API key and system instructions.
         """
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(model)
-        self.pre_prompt = self._load_pre_prompt(prompt_file) # Carrega o pré-prompt na inicialização
+        
+        self.api_key = api_key # Salva para possível reinicialização
+        self.model_name = model_name # Salva para possível reinicialização
+        self.prompt_file_path = prompt_file_path # Salva para possível reinicialização
 
-    # Carrega o pré-prompt de um arquivo
-    def _load_pre_prompt(self, file_path: str) -> str:
+        # Carrega o conteúdo do pré-prompt
+        self.system_instruction_content = self._load_pre_prompt(self.prompt_file_path)
+
+        # Configuração de geração, incluindo o schema JSON
+        self.generation_config = genai.types.GenerationConfig(
+            response_mime_type="application/json",
+            response_schema=DefaultAnswer 
+        )
+
+        # Inicializa o modelo com a system_instruction
+        self.model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config=self.generation_config,
+            system_instruction=self.system_instruction_content 
+        )
+        print(f"Modelo Gemini inicializado com instruções do sistema de '{self.prompt_file_path}'.")
+
+
+    def respond(self, message: str) -> dict:
         """
-        Loads the pre-prompt text from the specified file.
+        Generates a response to the given message using the pre-loaded system instructions.
         """
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return f.read().strip()
-        except FileNotFoundError:
-            print(f"Erro: O arquivo de pré-prompt '{file_path}' não foi encontrado.")
-            return "Você é um assistente virtual inteligente. Responda de forma clara e concisa em português.\nPergunta/Comando:" # Fallback
-        except Exception as e:
-            print(f"Erro ao carregar o arquivo de pré-prompt: {str(e)}")
-            return "Você é um assistente virtual inteligente. Responda de forma clara e concisa em português.\nPergunta/Comando:" # Fallback
-
-    # Retorna um dicionário com o JSON esperado
-    def respond(self, message: str) -> dict: 
-        """
-        Generates a response to the given message using the loaded pre-prompt,
-        expecting a JSON output.
-        """
-        try:
-            full_prompt = f"{self.pre_prompt} {message}"
-            response = self.model.generate_content(full_prompt)
-            
-            # Tenta analisar a resposta como JSON
+            # O pré-prompt já foi configurado como system_instruction,
+            # então só precisamos enviar a mensagem do usuário.
+            response = self.model.generate_content(contents=message)
+            json_string = response.text
             try:
-                json_response = json.loads(response.text.strip())
+                json_response = json.loads(json_string)
                 return json_response
             except json.JSONDecodeError as e:
                 print(f"Erro ao decodificar JSON da resposta da IA: {str(e)}")
-                print(f"Resposta bruta da IA: {response.text.strip()}")
-                return {"erro": "Formato JSON inválido da IA", "detalhes": str(e), "resposta_bruta": response.text.strip()}
+                print(f"Resposta bruta da IA: {json_string.strip()}")
+                return {
+                    "error": "Formato JSON inválido da IA",
+                    "details": str(e),
+                    "raw_response": json_string.strip()
+                }
         except Exception as e:
             print(f"Erro ao processar com Gemini: {str(e)}")
-            return {"erro": "Erro no servidor", "detalhes": str(e)}
+            # Adicionar mais detalhes do erro se possível, ex: response.prompt_feedback
+            error_details = str(e)
+            if hasattr(response, 'prompt_feedback'):
+                 error_details += f" | Feedback do prompt: {response.prompt_feedback}"
+            return {"error": "Erro no servidor Gemini", "details": error_details}
+
+
+    def update_system_instructions(self, new_prompt_file_path: str | None = None):
+        """
+        Recarrega as instruções do sistema do arquivo e reinicializa o modelo.
+        Se new_prompt_file_path não for fornecido, usa o caminho original.
+        """
+        if new_prompt_file_path:
+            self.prompt_file_path = new_prompt_file_path
+        
+        print(f"Atualizando instruções do sistema de '{self.prompt_file_path}'...")
+        self.system_instruction_content = self._load_pre_prompt(self.prompt_file_path)
+        
+        # Reinicializa o modelo com as novas instruções do sistema
+        self.model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config=self.generation_config,
+            system_instruction=self.system_instruction_content
+        )
+        print("Instruções do sistema atualizadas e modelo reinicializado.")

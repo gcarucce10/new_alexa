@@ -1,0 +1,11 @@
+    - (reminder)
+        - Descrição : Essa ação é responsável por criar lembretes, quando o usuário quiser que você lembre de algo essa é a ação correta.
+        - Uso : reminder --option (create/list/remove) --name ('nome do lembrete') --time ('data e hora')
+            - --option : O que o usuário quer que você faça, pode ser criar um lembrete (create), listar lembretes (list) ou remover um lembrete (remove)
+            - --name : Nome do lembrete que o usuário quer criar ou remover
+            - --time : Data e hora para o qual o lembrete deve ser definido (apenas para criação)
+        - Exemplos :
+            - Para criar um lembrete : reminder --option create --name 'Reunião com o cliente' --time 2023-10-01 10:00
+            - Para listar os lembretes : reminder --option list
+            - Para remover um lembrete : reminder --option remove --name 'Reunião com o cliente'
+            

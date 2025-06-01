@@ -1,0 +1,49 @@
+{
+    "actions": [
+        {
+            "name": "list-manager",
+            "description": "Gerencia listas de objetos, como adicionar, remover ou listar itens.",
+            "file-type": "python-script",
+            "file_extension": ".py",
+            "OS": {
+                "linux": true,
+                "windows": true
+            },
+            "execution": {
+                "server": true,
+                "client": false
+            },
+            "parallel": false
+        },
+        {
+            "name": "music",
+            "description": "Reproduz música com ffmpeg e ffplay, suporte apenas para arquivos locais.",
+            "file-type": "python-script",
+            "file_extension": ".py",
+            "OS": {
+                "linux": true,
+                "windows": true
+            },
+            "execution": {
+                "server": true,
+                "client": true
+            },
+            "parallel": true
+        },
+        {
+            "name": "weather",
+            "description": "Dá informações sobre o clima atual, previsão e condições meteorológicas.",
+            "file-type": "python-script",
+            "file_extension": ".py",
+            "OS": {
+                "linux": true,
+                "windows": true
+            },
+            "execution": {
+                "server": true,
+                "client": false
+            },
+            "parallel": false
+        }
+    ]
+}

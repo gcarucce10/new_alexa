@@ -31,8 +31,8 @@
             "parallel": true
         },
         {
-            "name": "weather",
-            "description": "Dá informações sobre o clima atual, previsão e condições meteorológicas.",
+            "name": "reminder",
+            "description": "Cria um lembrete pro usuário em determinado tempo.",
             "file-type": "python-script",
             "file_extension": ".py",
             "OS": {
@@ -40,10 +40,10 @@
                 "windows": true
             },
             "execution": {
-                "server": true,
-                "client": false
+                "server": false,
+                "client": true
             },
-            "parallel": false
+            "parallel": true
         }
     ]
 }

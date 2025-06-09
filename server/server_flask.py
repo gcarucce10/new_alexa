@@ -5,7 +5,7 @@ import os
 import json
 
 
-from AI.Gemini_agent import GeminiAgent
+from AI.genaiAgent import genaiAgent as GeminiAgent
 from Actions.actions_connector import Connector
 from prompts.build_prompt import build_prompt
 
@@ -22,7 +22,18 @@ with open(actionsData_path, 'r', encoding='utf-8') as f:
 app = Flask(__name__)
 
 # Inicializa o agente de IA 
-model = GeminiAgent(api_key=os.getenv("API_KEY"), model='gemini-2.0-flash')  
+model = GeminiAgent(
+    api_key=os.getenv("API_KEY"),
+    model='gemini-2.0-flash-lite', 
+    prompt_file_path=os.path.join("prompts", "Current_Prompt.txt")
+)  
+
+search_model = GeminiAgent(
+    api_key=os.getenv("API_KEY"),
+    model='gemini-2.0-flash',
+    prompt_file_path=os.path.join("prompts", "normal_anwser.txt"),
+    googleSearch=True,
+)
 
 @app.route('/update_config', methods=['POST'])
 def update_config():
@@ -57,16 +68,20 @@ def process_prompt():
 
     try:
         # Geração da resposta com Gemini
-        response = model.respond(texto_recebido)
+        response = model.generate_content(texto_recebido)
         
         resposta_gemini = response.get('text', 'Resposta não encontrada na resposta da IA')
         actions = response.get('actions', None)
 
         # Roda o que for necessário
         if actions:
-            conn = Connector(actions, jsonData, "server")
-            if conn.run_program():
-                resposta_gemini = resposta_gemini + "\n" + conn.resultado.stdout
+            if actions[0] == "AI-Anwser":
+                response = search_model.generate_content(texto_recebido)
+                resposta_gemini = response.get('text', 'Resposta não encontrada na resposta da IA')
+            else:
+                conn = Connector(actions, jsonData, "server")
+                if conn.run_program():
+                    resposta_gemini = resposta_gemini + "\n" + conn.resultado.stdout
             
 
         # Envio da resposta e das ações 

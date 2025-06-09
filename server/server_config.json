@@ -2,8 +2,6 @@
     "active_actions": [
         "list-manager",
         "music",
-        "search",
-        "weather",
         "reminder"
     ]
 }

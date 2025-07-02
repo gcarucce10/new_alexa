@@ -3,7 +3,7 @@ import sys
 import os
 import subprocess
 
-actions_data_path = os.path.join("actions_data.json")
+actions_data_path = os.path.join("Actions","actions_data.json")
 
 with open(actions_data_path, 'r', encoding='utf-8') as f:
             jsonData: dict = json.load(f)
@@ -12,7 +12,7 @@ with open(actions_data_path, 'r', encoding='utf-8') as f:
 
 class Connector:
 
-    def __init__(self, comands: list[str], jsonData: dict = None, where_exec: str = "server") -> None:
+    def __init__(self, comands: list[str], jsonData: dict = None, where_exec: str = "server", parallel: bool = False) -> None:
 
         self.action = comands[0]
 
@@ -34,6 +34,8 @@ class Connector:
 
         self.command: str = self.build_command()
 
+        if parallel:
+            self.wait = parallel
 
     def build_command(self) -> list[str]:
         """
@@ -41,7 +43,7 @@ class Connector:
         """
 
         absolute_dir: str = os.path.dirname(os.path.abspath(__file__))
-        path_tofile = os.path.join(absolute_dir, "Actions", self.action)
+        path_tofile = os.path.join(absolute_dir, self.action)
 
         filename = f"{self.action}{self.fileExtension}"
 

@@ -27,49 +27,75 @@ class genaiAgent(Agent):
             self.tools = [
                 types.Tool(google_search=types.GoogleSearch()),
             ]
-        else:
-            self.tools = []
 
-        self.generate_content_config = types.GenerateContentConfig(
-            safety_settings=[
-                types.SafetySetting(
-                    category="HARM_CATEGORY_HARASSMENT",
-                    threshold="BLOCK_ONLY_HIGH",  # Block few
-                ),
-                types.SafetySetting(
-                    category="HARM_CATEGORY_HATE_SPEECH",
-                    threshold="BLOCK_ONLY_HIGH",  # Block few
-                ),
-                types.SafetySetting(
-                    category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                    threshold="BLOCK_ONLY_HIGH",  # Block few
-                ),
-                types.SafetySetting(
-                    category="HARM_CATEGORY_DANGEROUS_CONTENT",
-                    threshold="BLOCK_ONLY_HIGH",  # Block few
-                ),
-            ],
-            response_mime_type="application/json",
-            response_schema=types.Schema(
-                type = types.Type.OBJECT,
-                required = ["text"],
-                properties = {
-                    "text": types.Schema(
-                        type = types.Type.STRING,
+            self.generate_content_config = types.GenerateContentConfig(
+                safety_settings=[
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HARASSMENT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
                     ),
-                    "actions": types.Schema(
-                        type = types.Type.ARRAY,
-                        items = types.Schema(
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HATE_SPEECH",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                ],
+                response_mime_type="text/plain",
+                system_instruction=[
+                    types.Part.from_text(text=self._load_pre_prompt(prompt_file_path)),
+                ],
+                tools=self.tools,
+            )
+
+        else:
+            self.generate_content_config = types.GenerateContentConfig(
+                safety_settings=[
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HARASSMENT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HATE_SPEECH",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                        threshold="BLOCK_ONLY_HIGH",  # Block few
+                    ),
+                ],
+                response_mime_type="application/json",
+                response_schema=types.Schema(
+                    type = types.Type.OBJECT,
+                    required = ["text"],
+                    properties = {
+                        "text": types.Schema(
                             type = types.Type.STRING,
                         ),
-                    ),
-                },
-            ),
-            system_instruction=[
-                types.Part.from_text(text=self._load_pre_prompt(prompt_file_path)),
-            ],
-            tools=self.tools,
-        )
+                        "actions": types.Schema(
+                            type = types.Type.ARRAY,
+                            items = types.Schema(
+                                type = types.Type.STRING,
+                            ),
+                        ),
+                    },
+                ),
+                system_instruction=[
+                    types.Part.from_text(text=self._load_pre_prompt(prompt_file_path)),
+                ],
+            )
+
+        
 
         self.chat = self.client.chats.create(
             model=model,

@@ -1,3 +1,6 @@
+import traceback
+import sys
+
 
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
@@ -68,16 +71,17 @@ def process_prompt():
 
     try:
         # Geração da resposta com Gemini
-        response = model.generate_content(texto_recebido)
-        
+        response = model.returnJson(texto_recebido)
+         
         resposta_gemini = response.get('text', 'Resposta não encontrada na resposta da IA')
         actions = response.get('actions', None)
 
         # Roda o que for necessário
         if actions:
+
             if actions[0] == "AI-Anwser":
-                response = search_model.generate_content(texto_recebido)
-                resposta_gemini = response.get('text', 'Resposta não encontrada na resposta da IA')
+                resposta_gemini = search_model.generate_content(texto_recebido) 
+
             else:
                 conn = Connector(actions, jsonData, "server")
                 if conn.run_program():
@@ -93,7 +97,24 @@ def process_prompt():
         })
         
     except Exception as e:
-        print(f"Erro ao processar com Gemini: {str(e)}")
+        print(f"An error occurred: {e}")
+        # Get the traceback information
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        # Extract the last frame of the traceback (where the error originated)
+        tb_list = traceback.extract_tb(exc_tb)
+        last_frame = tb_list[-1]
+
+        filename = last_frame.filename
+        line_number = last_frame.lineno
+        function_name = last_frame.name
+        code_line = last_frame.line
+
+        print(f"Error details:")
+        print(f"  File: {filename}")
+        print(f"  Line: {line_number}")
+        print(f"  Function: {function_name}")
+        print(f"  Code: {code_line}")
+
         return jsonify({
             "resposta": f"Erro no servidor: {str(e)}",
             "status": "error"

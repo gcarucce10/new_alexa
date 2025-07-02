@@ -3,16 +3,9 @@ import sys
 import os
 import subprocess
 
-actions_data_path = os.path.join("actions_data.json")
-
-with open(actions_data_path, 'r', encoding='utf-8') as f:
-            jsonData: dict = json.load(f)
-
-
-
 class Connector:
 
-    def __init__(self, comands: list[str], jsonData: dict = None, where_exec: str = "server") -> None:
+    def __init__(self, comands: list[str], jsonData: dict = None, where_exec: str = "server", parallel: bool = False) -> None:
 
         self.action = comands[0]
 
@@ -34,6 +27,9 @@ class Connector:
 
         self.command: str = self.build_command()
 
+        if parallel:
+            self.wait = parallel
+
 
     def build_command(self) -> list[str]:
         """
@@ -41,7 +37,7 @@ class Connector:
         """
 
         absolute_dir: str = os.path.dirname(os.path.abspath(__file__))
-        path_tofile = os.path.join(absolute_dir, "Actions", self.action)
+        path_tofile = os.path.join(absolute_dir, self.action)
 
         filename = f"{self.action}{self.fileExtension}"
 
@@ -67,17 +63,22 @@ class Connector:
         Verifica se o comando pode ser executado com base no tipo de execução (servidor ou cliente).
         """
         if self.where_exec == "server" and not self.server_exec:
-            print(f"Ação '{self.action}' não pode ser executada no servidor.")
+            print(f"Ação '{self.action}' não pode ser executada no servidor.", file=sys.stderr)
             return False
         elif self.where_exec == "client" and not self.client_exec:
-            print(f"Ação '{self.action}' não pode ser executada no cliente.")
+            print(f"Ação '{self.action}' não pode ser executada no cliente.", file=sys.stderr)
             return False
         return True    
+    
+    def monitor_execution(self):
+        for line in iter(self.resultado.stdout.readline, ''):
+            print(f"Programa {self.action}: {line}", end='')
+
 
     def run_program(self):
 
         if (not self.can_execute()):
-            print(f"Não é possível executar a ação '{self.action}' no ambiente atual.")
+            print(f"Não é possível executar a ação '{self.action}' no ambiente atual.", file=sys.stderr)
             return False
             
         print(f"Tentando executar: {' '.join(self.command)}") # Para depuração
@@ -113,13 +114,3 @@ class Connector:
             print(f"Ocorreu uma exceção inesperada: {e}")
             return False
 
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Uso: python actions_connector.py '<comando e parametros>' ")
-        sys.exit(1)
-    
-    commands = sys.argv[1:]
-
-    connector = Connector(commands, jsonData)
-    connector.run_program()

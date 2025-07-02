@@ -1,11 +1,13 @@
-    - (reminder)
-        - Descrição : Essa ação é responsável por criar lembretes, quando o usuário quiser que você lembre de algo essa é a ação correta.
-        - Uso : reminder --option (create/list/remove) --name ('nome do lembrete') --time ('data e hora')
-            - --option : O que o usuário quer que você faça, pode ser criar um lembrete (create), listar lembretes (list) ou remover um lembrete (remove)
-            - --name : Nome do lembrete que o usuário quer criar ou remover
-            - --time : Data e hora para o qual o lembrete deve ser definido (apenas para criação)
-        - Exemplos :
-            - Para criar um lembrete : reminder --option create --name 'Reunião com o cliente' --time 2023-10-01 10:00
-            - Para listar os lembretes : reminder --option list
-            - Para remover um lembrete : reminder --option remove --name 'Reunião com o cliente'
-            
+    -(reminder)
+        - Descrição: Essa ação é responsável por criar, gerenciar e monitorar lembretes. O programa vai rodar em segundo plano para verificar os horários e emitir alertas na área de trabalho quando o momento de um lembrete chegar.
+        - Uso: reminder --option (create/list/remove) --name (nome do lembrete) --time (data e hora)
+            --option: A ação que o programa deve executar. As opções são:
+                - create: Para criar um novo lembrete.
+                - list: Para listar todos os lembretes pendentes.
+                - remove: Para remover um lembrete específico pelo nome.
+            --name: Nome do lembrete. (Obrigatório para as opções create e remove).
+            --time: Data e hora para o lembrete no formato AAAA-MM-DD HH:MM. (Obrigatório para a opção create).
+        - Exemplos:
+            - Para criar um lembrete: reminder --option create --name Reunião com o cliente --time 2025-07-20 10:00
+            - Para listar os lembretes: reminder --option list
+            - Para remover um lembrete: reminder --option remove --name Reunião com o cliente

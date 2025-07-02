@@ -13,7 +13,8 @@
                 "server": true,
                 "client": false
             },
-            "parallel": false
+            "parallel": false,
+            "init-in-startup": false
         },
         {
             "name": "music",
@@ -28,7 +29,8 @@
                 "server": true,
                 "client": true
             },
-            "parallel": true
+            "parallel": true,
+            "init-in-startup": false
         },
         {
             "name": "reminder",
@@ -43,7 +45,8 @@
                 "server": false,
                 "client": true
             },
-            "parallel": true
+            "parallel": false,
+            "init-in-startup": true
         }
     ]
 }

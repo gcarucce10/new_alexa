@@ -57,7 +57,7 @@ def server_comunication(prompt: str):
             SERVER_URL,
             json=payload,
             headers=headers,
-            timeout=10  # Timeout de 10 segundos
+            timeout=20  # Timeout de 20 segundos
         )
         
         response.raise_for_status()  # Levanta exceção para erros HTTP
@@ -135,13 +135,35 @@ def main():
                     response = response_obj.get("anwser", None)
                     actions= response_obj.get("actions", [])
 
-                if actions and actions[0] != "AI-Anwser":
-                    conn = Connector(actions, jsonData, "client")
-                    if conn.run_program():
-                        if conn.wait == False:
-                            response = response + "\n" + conn.resultado.stdout
+                for action in actions:
+                    
+                    # Parse Action
+                    params = action.split(";")
 
-                speak.speak_text(response)
+                    if params[0] != "AI-Anwser" and params[0] != "music":
+
+                        conn = Connector(params, jsonData, "client")
+                        if conn.run_program():
+                            if conn.wait == False:
+                                response = response + "\n" + conn.resultado.stdout
+                        
+
+                # Inicia as threads de fala e interrupção
+                print(f"Resposta do servidor: {response}")
+                stop_event = threading.Event()
+                speak_thread = threading.Thread(target=speak.speak_text, args=(response, stop_event))
+                if option == 2:
+                    stop_thread = threading.Thread(target=speak.wait_for_interruption_keyboard, args=('esc', stop_event))
+                elif option == 1:
+                    stop_thread = threading.Thread(target=speak.wait_for_interruption_audio, args=(speak_thread, stop_event))
+
+                speak_thread.start()
+                stop_thread.start()
+
+                # Espera as threads terminarem
+                speak_thread.join()
+                stop_thread.join()
+
                 text_ready = False
 
 

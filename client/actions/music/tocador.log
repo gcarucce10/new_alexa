@@ -1,0 +1,82 @@
+
+--- Log do Tocador iniciado em: 2025-07-04 03:17:50.861790 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:17:07.352398 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Santana\(1971) Santana (III)\1. Santana - Batuka  [USSM17100231].flac
+▶ A tentar iniciar ffplay para: 1. Santana - Batuka  [USSM17100231].flac
+[Controlo] Mensagem recebida: STOP
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:19:45.785940 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conexão perdida ou recusada: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente. A tentar novamente em 5s...
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:20:24.654799 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Bob Dylan\(1965) Highway 61 Revisited\1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:20:03.516983 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Bob Dylan\(1965) Highway 61 Revisited\1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+✔ ffplay terminou (música '1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac' acabou).
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:21:35.679657 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Bob Dylan\(1965) Highway 61 Revisited\1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.
+
+--- Log do Tocador iniciado em: 2025-07-04 03:22:49.370478 ---
+--- Tocador (v3.4 - Saída Independente) ---
+[Controlo] A conectar ao servidor de controlo em 127.0.0.1:1235...
+[Controlo] Conectado!
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Bob Dylan\(1965) Highway 61 Revisited\1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+▶ A tentar iniciar ffplay para: 1. Bob Dylan - Like a Rolling Stone (Album Version)  [USSM19922509].flac
+[Controlo] Mensagem recebida: PLAY:F:\Midioteca\Musica\Bob Dylan\(1965) Highway 61 Revisited\2. Bob Dylan - Tombstone Blues (Album Version)  [USSM19922508].flac
+▶ A tentar iniciar ffplay para: 2. Bob Dylan - Tombstone Blues (Album Version)  [USSM19922508].flac
+[Controlo] Mensagem recebida: STOP
+
+Pedido de encerramento pelo utilizador...
+Tocador finalizado.

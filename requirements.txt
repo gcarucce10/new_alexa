@@ -1,0 +1,18 @@
+# Common dependencies (if any) can be added here
+
+# Client dependencies
+# -------------------
+PySide6
+speechrecognition
+pyttsx3
+keyboard
+python-dotenv
+plyer
+requests
+azure-cognitiveservices-speech
+
+# Server dependencies
+# -------------------
+Flask
+python-dotenv
+google-genai

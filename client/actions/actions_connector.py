@@ -15,7 +15,7 @@ class Connector:
             if action.get("name") == self.action:
                 self.server_exec = action.get("execution").get("server")
                 self.client_exec = action.get("execution").get("client")
-                self.fileType = action.get("fileType", "python-script")
+                self.fileType = action.get("file-type", "python-script")
                 self.fileExtension = action.get("file_extension", "")
                 self.wait = action.get("parallel", False)
                 break
@@ -42,7 +42,7 @@ class Connector:
         filename = f"{self.action}{self.fileExtension}"
 
         if self.fileType == "python-script":
-            command = [sys.executable] 
+            command = [sys.executable, "-u"] 
         else:   
             # Para outros tipos de arquivo, apenas junta os parâmetros
             if os.name == 'linux' or os.name == 'darwin':
@@ -71,8 +71,17 @@ class Connector:
         return True    
     
     def monitor_execution(self):
-        for line in iter(self.resultado.stdout.readline, ''):
-            print(f"Programa {self.action}: {line}", end='')
+        
+        if not hasattr(self, "resultado") or self.resultado is None:
+            print("Processo não iniciado.")
+            return
+        try:
+            for line in self.resultado.stdout:
+                print(f"Programa {self.action}: {line}", end='')
+            self.resultado.stdout.close()
+            self.resultado.wait()
+        except Exception as e:
+            print(f"Erro ao monitorar execução: {e}")
 
 
     def run_program(self):
@@ -89,7 +98,7 @@ class Connector:
             # check=False (por enquanto) para que não levante erro e possamos inspecionar
 
             # Se a ação deve ocorrer em paralelo, usamos Popen, senão usamos run
-            if self.wait:
+            if self.wait: 
                 self.resultado = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             else:
                 self.resultado = subprocess.run(self.command, capture_output=True, text=True, check=False)

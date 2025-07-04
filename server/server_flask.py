@@ -1,6 +1,6 @@
 import traceback
 import sys
-
+import threading
 
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
@@ -38,6 +38,23 @@ search_model = GeminiAgent(
     googleSearch=True,
 )
 
+# Inicializa todas as acoes que estiverem marcadas para inicialização no startup
+# Essas ações serão executadas em threads separadas para não bloquear o assistente
+
+actions: list[dict] = jsonData.get("actions")
+
+threads = []
+startup_actions = [action for action in actions if action.get("init-in-startup")]
+
+# Para cada ação que deve ser inicializada, rode a em paralelo e crie um monitor na thread
+for action in startup_actions:
+    connector = Connector([action["name"], "--init", "yes"], jsonData, "server", True)
+    connector.run_program()
+
+    thread = threading.Thread(target=connector.monitor_execution)
+    threads.append(thread)
+    thread.start()
+
 @app.route('/update_config', methods=['POST'])
 def update_config():
     # Atualiza o arquivo de configuração do servidor
@@ -55,6 +72,7 @@ def update_config():
 # Rota para processar o prompt de voz
 @app.route('/processar_voz', methods=['POST'])
 def process_prompt():
+
     dados = request.json
 
     if not dados or 'prompt' not in dados:
@@ -70,22 +88,33 @@ def process_prompt():
     print(f"Texto recebido: {texto_recebido}")
 
     try:
+
         # Geração da resposta com Gemini
         response = model.returnJson(texto_recebido)
          
         resposta_gemini = response.get('text', 'Resposta não encontrada na resposta da IA')
-        actions = response.get('actions', None)
+        actions: list[str] = response.get('actions', None)
 
-        # Roda o que for necessário
-        if actions:
+        # Roda todas as acoes necessarias
+        for action in actions:   
 
-            if actions[0] == "AI-Anwser":
+            if action == "AI-Anwser":
+
+                # Gera a resposta com o modelo de busca
                 resposta_gemini = search_model.generate_content(texto_recebido) 
+                resposta_gemini = resposta_gemini.replace("*", "")
+                model.generate_content("Não Responder essa mensagem: " + resposta_gemini)
 
             else:
-                conn = Connector(actions, jsonData, "server")
+                # Parse Action
+                params = action.split(";")
+
+                conn = Connector(params, jsonData, "server")
                 if conn.run_program():
-                    resposta_gemini = resposta_gemini + "\n" + conn.resultado.stdout
+                    if conn.wait == False:
+                        model.generate_content("Não Responder essa mensagem: " + conn.resultado.stdout)
+                        # Se a ação não for paralela, adiciona o resultado à resposta
+                        resposta_gemini = resposta_gemini + "\n" + conn.resultado.stdout
             
 
         # Envio da resposta e das ações 
@@ -121,4 +150,4 @@ def process_prompt():
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)  

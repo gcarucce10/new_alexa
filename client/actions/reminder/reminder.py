@@ -79,12 +79,13 @@ def remover_lembrete(nome):
 
 def monitorar_lembretes():
     """Fica em loop, verificando e disparando alertas para lembretes."""
+    global notification
     if not PLYER_DISPONIVEL:
         print("Erro: A biblioteca 'plyer' não foi encontrada.")
         print("Por favor, instale-a com: pip install plyer")
         return
 
-    print("Monitorando lembretes... Pressione Ctrl+C para parar.")
+    print("Monitorando lembretes... Pressione Ctrl+C para parar.", flush=True)
     try:
         while True:
             lembretes = carregar_lembretes()
@@ -96,7 +97,7 @@ def monitorar_lembretes():
                 
                 # Se a hora do lembrete já passou ou é agora
                 if tempo_lembrete <= agora:
-                    print(f"ALERTA: Lembrete '{lembrete['nome']}'!")
+                    print(f"ALERTA: Lembrete '{lembrete['nome']}'!", flush=True)
                     
                     # Dispara a notificação de desktop
                     notification.notify(

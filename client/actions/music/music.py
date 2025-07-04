@@ -1,158 +1,127 @@
+# Arquivo: tocador.py (ou o teu ...\actions\music\music.py do cliente)
+
 import subprocess
-import threading
-import re
 import time
-import select
+import os
+import socket
+import threading
+import queue
+import sys  # Importar o módulo sys
+from datetime import datetime # Para adicionar data/hora aos logs
 
-# --- Variáveis de Estado ---
-ffmpeg_process = None
-ffplay_process = None
-current_time_seconds = 0.0
-is_playing = False
-lock = threading.Lock() # Para acesso seguro à variável de tempo
+# As funções listen_for_control_messages e iniciar_ffplay continuam iguais.
+def listen_for_control_messages(host, port, command_queue, stop_event):
+    while not stop_event.is_set():
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(f"[Controlo] A conectar ao servidor de controlo em {host}:{port}...")
+            sock.connect((host, port))
+            print("[Controlo] Conectado!")
+            buffer = ""
+            while not stop_event.is_set():
+                data = sock.recv(1024).decode('utf-8')
+                if not data:
+                    raise ConnectionResetError
+                buffer += data
+                while '\n' in buffer:
+                    message, buffer = buffer.split('\n', 1)
+                    print(f"[Controlo] Mensagem recebida: {message}")
+                    command_queue.put(message)
+        except (ConnectionRefusedError, ConnectionResetError, OSError) as e:
+            print(f"[Controlo] Conexão perdida ou recusada: {e}. A tentar novamente em 5s...")
+            time.sleep(5)
+        finally:
+            if sock: sock.close()
 
-# --- Configurações ---
-FILE_PATH = r"C:\Caminho\Para\Seu\Arquivo.flac"
-SERVER_IP = "127.0.0.1" # Mude para seu IP se o cliente for remoto
-PORT = "1234"
+def iniciar_ffplay(host='127.0.0.1', porta=1234):
+    endereco = f'tcp://{host}:{porta}'
+    comando = ['ffplay', '-nodisp', '-loglevel', 'error', '-autoexit', '-i', endereco]
+    return subprocess.Popen(comando)
 
-# --- Regex para pegar o tempo do ffmpeg ---
-TIME_REGEX = re.compile(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})")
-
-def parse_time(time_str):
-    """Converte HH:MM:SS.ms para segundos."""
-    match = TIME_REGEX.search(time_str)
-    if match:
-        h, m, s, ms = map(int, match.groups())
-        return h * 3600 + m * 60 + s + ms / 100.0
-    return None
-
-def read_ffmpeg_output(process):
-    """Lê stderr do ffmpeg em uma thread e atualiza o tempo."""
-    global current_time_seconds
-    # Usamos select para ler de forma não-bloqueante (melhor em Linux/macOS)
-    # Para Windows, a leitura direta pode funcionar mas pode bloquear.
-    # Uma abordagem mais robusta pode ser necessária em produção.
+# A função main é a que vamos corrigir
+def main():
+    # --- BLOCO DE REDIRECIONAMENTO DE SAÍDA ---
     try:
-        while process.poll() is None: # Enquanto o processo estiver rodando
-            line = process.stderr.readline()
-            if not line:
-                break
-            line = line.decode('utf-8', errors='ignore').strip()
-            # FFMPEG imprime o progresso com '\r' no final, então pegamos essas linhas
-            if 'time=' in line:
-                # print(f"Debug FFMPEG: {line}") # Descomente para depurar
-                t = parse_time(line)
-                if t is not None:
-                    with lock:
-                        current_time_seconds = t
-            time.sleep(0.05) # Pequena pausa para não sobrecarregar a CPU
+        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        log_file_path = os.path.join(SCRIPT_DIR, 'tocador.log')
+        
+        # 'a' para adicionar ao final do arquivo
+        log_file = open(log_file_path, 'a', encoding='utf-8')
+        
+        # Redireciona stdout e stderr para o nosso arquivo de log
+        sys.stdout = log_file
+        sys.stderr = log_file
+        
+        print(f"\n--- Log do Tocador iniciado em: {datetime.now()} ---")
     except Exception as e:
-        print(f"Erro lendo stderr: {e}")
-    print("Thread de leitura finalizada.")
+        # Se falhar, imprime na consola original
+        print(f"ERRO CRÍTICO ao configurar o log: {e}")
 
+    # --- O resto do programa ---
+    SERVER_HOST = '127.0.0.1'
+    command_queue = queue.Queue()
+    stop_event = threading.Event()
 
-def start_stream(start_at=0.0):
-    """Inicia ffmpeg e ffplay."""
-    global ffmpeg_process, ffplay_process, is_playing, current_time_seconds
-    if is_playing:
-        print("Já está tocando.")
-        return
-
-    print(f"Iniciando stream a partir de {start_at:.2f} segundos...")
-    with lock:
-        current_time_seconds = start_at
-
-    ffmpeg_command = [
-        'ffmpeg', '-hide_banner', # '-v', 'quiet', # Use para menos output, mas pode perder o tempo
-        '-ss', str(start_at),
-        '-re',
-        '-i', FILE_PATH,
-        '-c:a', 'libopus',
-        '-b:a', '256k',
-        '-ar', '48000',
-        '-f', 'mpegts',
-        f'tcp://{SERVER_IP}:{PORT}'
-    ]
-
-    # Inicia ffmpeg capturando stderr
-    ffmpeg_process = subprocess.Popen(
-        ffmpeg_command,
-        stderr=subprocess.PIPE,
-        stdout=subprocess.DEVNULL
+    control_thread = threading.Thread(
+        target=listen_for_control_messages,
+        args=(SERVER_HOST, 1235, command_queue, stop_event),
+        daemon=True
     )
-    time.sleep(1) # Dá um tempo pro ffmpeg começar a enviar
+    control_thread.start()
 
-    ffplay_command = [
-        'ffplay', '-hide_banner', '-autoexit', # '-nodisp', # Se não quiser janela
-        f'tcp://0.0.0.0:{PORT}?listen=1'
-    ]
+    processo_ffplay = None
+    musica_alvo_path = None
+    musica_em_reproducao_path = None
 
-    # Inicia ffplay
-    ffplay_process = subprocess.Popen(ffplay_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    time.sleep(2) # Dá um tempo pro ffplay conectar e começar
+    print("--- Tocador (v3.4 - Saída Independente) ---")
+    try:
+        while not stop_event.is_set():
+            try:
+                mensagem = command_queue.get_nowait()
+                if mensagem.startswith("PLAY:"):
+                    musica_alvo_path = mensagem.split(":", 1)[1]
+                elif mensagem == "STOP":
+                    musica_alvo_path = None
+            except queue.Empty:
+                pass 
 
-    if ffmpeg_process.poll() is None and ffplay_process.poll() is None:
-        print("Stream iniciado com sucesso!")
-        is_playing = True
-        # Inicia a thread para ler o tempo
-        thread = threading.Thread(target=read_ffmpeg_output, args=(ffmpeg_process,), daemon=True)
-        thread.start()
-    else:
-        print("Falha ao iniciar stream.")
-        stop_stream()
+            if musica_alvo_path != musica_em_reproducao_path:
+                if processo_ffplay:
+                    processo_ffplay.kill()
+                    processo_ffplay.wait()
+                    processo_ffplay = None
+                
+                musica_em_reproducao_path = None
+
+                if musica_alvo_path:
+                    print(f"▶ A tentar iniciar ffplay para: {os.path.basename(musica_alvo_path)}")
+                    try:
+                        processo_ffplay = iniciar_ffplay()
+                        musica_em_reproducao_path = musica_alvo_path
+                    except FileNotFoundError:
+                        print("\n!!! ERRO CRÍTICO: 'ffplay' não foi encontrado. !!!")
+                        break 
+                    except Exception as e_popen:
+                        print(f"\n!!! ERRO CRÍTICO ao iniciar ffplay: {e_popen}!!!")
+                        break
+            
+            if processo_ffplay and processo_ffplay.poll() is not None:
+                print(f"✔ ffplay terminou (música '{os.path.basename(musica_em_reproducao_path)}' acabou).")
+                processo_ffplay = None
+                musica_em_reproducao_path = None
+            
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("\nPedido de encerramento pelo utilizador...")
+    except Exception as e_main:
+        print(f"\nERRO INESPERADO NO LOOP PRINCIPAL DO TOCADOR: {e_main}")
+    finally:
+        stop_event.set() 
+        if processo_ffplay:
+            processo_ffplay.kill()
+        print("Tocador finalizado.")
 
 
-def stop_stream():
-    """Para ffmpeg e ffplay."""
-    global ffmpeg_process, ffplay_process, is_playing
-    if not is_playing:
-        print("Não está tocando.")
-        return
-
-    print("Parando stream...")
-    if ffplay_process:
-        ffplay_process.terminate()
-        ffplay_process.wait(timeout=2) # Espera um pouco
-        if ffplay_process.poll() is None: # Se não terminou
-           ffplay_process.kill() # Força
-        ffplay_process = None
-
-    if ffmpeg_process:
-        ffmpeg_process.terminate()
-        ffmpeg_process.wait(timeout=2)
-        if ffmpeg_process.poll() is None:
-           ffmpeg_process.kill()
-        ffmpeg_process = None
-
-    is_playing = False
-    print("Stream parado.")
-    with lock:
-      print(f"Último tempo registrado: {current_time_seconds:.2f} segundos.")
-
-
-# --- Loop de Controle Principal ---
-try:
-    while True:
-        command = input("Digite 'play', 'pause', 'quit': ").strip().lower()
-        if command == 'play':
-            if not is_playing:
-                start_stream(current_time_seconds)
-            else:
-                print("Já está tocando.")
-        elif command == 'pause':
-            if is_playing:
-                stop_stream()
-            else:
-                print("Não está tocando para pausar.")
-        elif command == 'quit':
-            if is_playing:
-                stop_stream()
-            break
-        else:
-            print("Comando inválido.")
-
-except KeyboardInterrupt:
-    print("\nSaindo...")
-    if is_playing:
-        stop_stream()
+if __name__ == '__main__':
+    main()

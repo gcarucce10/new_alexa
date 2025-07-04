@@ -3,13 +3,6 @@ import sys
 import os
 import subprocess
 
-actions_data_path = os.path.join("Actions","actions_data.json")
-
-with open(actions_data_path, 'r', encoding='utf-8') as f:
-            jsonData: dict = json.load(f)
-
-
-
 class Connector:
 
     def __init__(self, comands: list[str], jsonData: dict = None, where_exec: str = "server", parallel: bool = False) -> None:
@@ -22,7 +15,7 @@ class Connector:
             if action.get("name") == self.action:
                 self.server_exec = action.get("execution").get("server")
                 self.client_exec = action.get("execution").get("client")
-                self.fileType = action.get("fileType", "python-script")
+                self.fileType = action.get("file-type", "python-script")
                 self.fileExtension = action.get("file_extension", "")
                 self.wait = action.get("parallel", False)
                 break
@@ -37,6 +30,7 @@ class Connector:
         if parallel:
             self.wait = parallel
 
+
     def build_command(self) -> list[str]:
         """
         Constrói o comando a ser executado com base nos parâmetros fornecidos.
@@ -48,7 +42,7 @@ class Connector:
         filename = f"{self.action}{self.fileExtension}"
 
         if self.fileType == "python-script":
-            command = [sys.executable] 
+            command = [sys.executable, "-u"] 
         else:   
             # Para outros tipos de arquivo, apenas junta os parâmetros
             if os.name == 'linux' or os.name == 'darwin':
@@ -69,17 +63,31 @@ class Connector:
         Verifica se o comando pode ser executado com base no tipo de execução (servidor ou cliente).
         """
         if self.where_exec == "server" and not self.server_exec:
-            print(f"Ação '{self.action}' não pode ser executada no servidor.")
+            print(f"Ação '{self.action}' não pode ser executada no servidor.", file=sys.stderr)
             return False
         elif self.where_exec == "client" and not self.client_exec:
-            print(f"Ação '{self.action}' não pode ser executada no cliente.")
+            print(f"Ação '{self.action}' não pode ser executada no cliente.", file=sys.stderr)
             return False
         return True    
+    
+    def monitor_execution(self):
+        
+        if not hasattr(self, "resultado") or self.resultado is None:
+            print("Processo não iniciado.")
+            return
+        try:
+            for line in self.resultado.stdout:
+                print(f"Programa {self.action}: {line}", end='')
+            self.resultado.stdout.close()
+            self.resultado.wait()
+        except Exception as e:
+            print(f"Erro ao monitorar execução: {e}")
+
 
     def run_program(self):
 
         if (not self.can_execute()):
-            print(f"Não é possível executar a ação '{self.action}' no ambiente atual.")
+            print(f"Não é possível executar a ação '{self.action}' no ambiente atual.", file=sys.stderr)
             return False
             
         print(f"Tentando executar: {' '.join(self.command)}") # Para depuração
@@ -90,7 +98,7 @@ class Connector:
             # check=False (por enquanto) para que não levante erro e possamos inspecionar
 
             # Se a ação deve ocorrer em paralelo, usamos Popen, senão usamos run
-            if self.wait:
+            if self.wait: 
                 self.resultado = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             else:
                 self.resultado = subprocess.run(self.command, capture_output=True, text=True, check=False)
@@ -115,13 +123,3 @@ class Connector:
             print(f"Ocorreu uma exceção inesperada: {e}")
             return False
 
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Uso: python actions_connector.py '<comando e parametros>' ")
-        sys.exit(1)
-    
-    commands = sys.argv[1:]
-
-    connector = Connector(commands, jsonData)
-    connector.run_program()

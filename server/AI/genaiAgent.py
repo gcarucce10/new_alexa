@@ -95,13 +95,10 @@ class genaiAgent(Agent):
                 ],
             )
 
-        
-
         self.chat = self.client.chats.create(
             model=model,
             config=self.generate_content_config,
         )
-
 
     def generate_content(self, message: str) -> str:
         """

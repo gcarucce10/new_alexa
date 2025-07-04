@@ -1,6 +1,20 @@
 {
-    "lista de compras": [
+    "Compras-03/07": [
         "Tomate",
-        "Abacate"
+        "Laranja",
+        "Banana"
+    ],
+    "Melhores Álbuns de Frank Zappa": [
+        "Hot Rats"
+    ],
+    "The Best of Jazz": [
+        "Kind of Blue"
+    ],
+    "Supermercado": [
+        "Tomate",
+        "Cebola",
+        "Laranja",
+        "Maçã",
+        "Banana"
     ]
 }

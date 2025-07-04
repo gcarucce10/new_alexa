@@ -29,8 +29,8 @@
                 "server": true,
                 "client": true
             },
-            "parallel": true,
-            "init-in-startup": false
+            "parallel": false,
+            "init-in-startup": true
         },
         {
             "name": "reminder",

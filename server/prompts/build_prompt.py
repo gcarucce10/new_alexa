@@ -1,37 +1,19 @@
 import json
 import os
 
-def build_prompt() -> None:
-    
-    path_tofile = os.path.join("server_config.json")
 
-    with open(path_tofile, 'r', encoding='utf-8') as f:
-                jsonData: dict = json.load(f)
-
-    arquivos_entrada: list[str] = []
-
-    path_tofile = os.path.join("", "prompts", "begin.txt")
-    arquivos_entrada.append(path_tofile)
-
-    for action in jsonData.get("active_actions", []):
-        path_tofile = os.path.join("Actions", action, "description.txt")
-        arquivos_entrada.append(path_tofile)
-
-    path_tofile = os.path.join("", "prompts", "end.txt")
-    arquivos_entrada.append(path_tofile)
-
-
-    # Define o nome do arquivo de saída
-    arquivo_saida= os.path.join("", "prompts", "Current_Prompt.txt")
-
-    # Abre o arquivo de saída no modo de escrita ('w')
-    with open(arquivo_saida, 'w', encoding='utf-8') as outfile:
-        # Itera sobre cada arquivo de entrada encontrado
-        for nome_arquivo in arquivos_entrada:
-            # Abre cada arquivo de entrada no modo de leitura ('r')
-            with open(nome_arquivo, 'r', encoding='utf-8') as infile:
-                # Lê o conteúdo do arquivo de entrada e o escreve no arquivo de saída
+def unite_txt_files(file1: str, file2: str, file3: str, output_file: str) -> None:
+    with open(output_file, 'w', encoding='utf-8') as outfile:
+        for fname in [file1, file2, file3]:
+            with open(fname, 'r', encoding='utf-8') as infile:
                 outfile.write(infile.read())
-                # Adiciona uma quebra de linha entre os conteúdos dos arquivos (opcional)
-                outfile.write('\n') # Remova esta linha se não quiser uma quebra de linha extra
+                outfile.write('\n')  # Optional: adds a newline between files
 
+def build_prompt() -> None:
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    b_path = os.path.join(current_dir, "begin.txt")
+    e_path = os.path.join(current_dir, "end.txt")
+    instruction_set = os.path.join(current_dir, "Instruction.txt")
+    out_path = os.path.join(current_dir, "Actions_Prompt.txt")
+    print("[UPDATE] Atualizando o prompt")
+    unite_txt_files(b_path, instruction_set, e_path, out_path)

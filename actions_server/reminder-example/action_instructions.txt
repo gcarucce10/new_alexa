@@ -1,0 +1,9 @@
+-(reminder manager)
+        - Descrição: Gerenciador de lembretes. Permite adicionar novos compromissos e verificar se há alertas pendentes.
+        - Uso: reminder_manager --mode [add/check/list] --message "texto do lembrete" --time "YYYY-MM-DD HH:MM"
+            --mode: O modo de operação. Use "add" para criar ou "list" para ver pendências.
+            --message: A descrição do compromisso (obrigatório para mode 'add').
+            --time: A data e hora exata no formato "YYYY-MM-DD HH:MM" (ex: "2023-11-25 14:30"). Obrigatório para mode 'add'.
+        - Exemplos:
+            - Agendar algo: reminder_manager;--mode;add;--message;"Tomar remédio";--time;"2023-11-25 20:00"
+            - Verificar alertas: reminder_manager --mode check

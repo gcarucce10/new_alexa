@@ -1,0 +1,5 @@
+{
+    "name": "dice_manager",
+    "description": "Simula um dado com n lados e retorna o resultado.",
+    "version": "0.1"
+}

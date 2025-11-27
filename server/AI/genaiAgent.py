@@ -77,11 +77,7 @@ class genaiAgent(Agent):
                 response_mime_type="application/json",
                 response_schema=types.Schema(
                     type = types.Type.OBJECT,
-                    required = ["text"],
                     properties = {
-                        "text": types.Schema(
-                            type = types.Type.STRING,
-                        ),
                         "actions": types.Schema(
                             type = types.Type.ARRAY,
                             items = types.Schema(
@@ -99,6 +95,18 @@ class genaiAgent(Agent):
             model=model,
             config=self.generate_content_config,
         )
+
+    def add_context(self, message: str, name: str = None) -> None:
+        """
+        Adds context to the current chat session.
+        """
+        message = "Não responder a essa mensagem: " + message
+        if name:
+            print(name)
+        print(message)
+        print(self.chat.send_message(message).text)
+
+        
 
     def generate_content(self, message: str) -> str:
         """
@@ -180,7 +188,7 @@ class genaiAgent(Agent):
 
         # Reinicializa o modelo e chat com as novas instruções do sistema
         self.chat = self.client.chats.create(
-            model=model,
+            model=self.model,
             config=self.generate_content_config,
         )
 

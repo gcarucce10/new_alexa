@@ -1,37 +1,8 @@
 Formato JSON:
 {
-    "text": 
-    "actions":
+    "actions": list[str] --> [acao1;param1;param2, acao2;param1;param2]
 }
 
-Exemplos:
-{
-    "text": "Olá! Como posso ajudar você hoje?",
-    "actions": []
-}
+Cada item é uma ação diferente, sempre use o ponto e virgula para separar os parametros
+nome-acao;param1;param2;param3;paramN
 
-{
-    "text": "A previsão do tempo para São Paulo é de sol com algumas nuvens.",
-    "actions": [
-        "weather",
-        "--option",
-        "current",
-        "--location",
-        "São Paulo"
-    ]
-}
-
-{
-    "text": "Vou tocar a música 'Imagine' do John Lennon.",
-    "actions": [
-        "music",
-        "--name",
-        "Imagine",
-        "--category",
-        "mus", 
-        "--option",
-        "play"
-    ]
-}
-
-O prompt do usuário será fornecido a seguir :

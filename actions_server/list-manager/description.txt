@@ -1,0 +1,18 @@
+-(list manager)
+        - Descrição: Gerenciador de listas genéricas. Permite criar listas, adicionar itens, remover itens e visualizar o conteúdo.
+        - Uso: list_manager --mode [create/save/remove/list/list-items] --list "Nome da Lista" --item "Nome do Item"
+            --mode: A ação a realizar.
+                 'list': Lista os nomes de todas as listas existentes (não requer outros parâmetros).
+                 'list-items': Fala os itens dentro de uma lista específica (exige --list).
+                 'create': Cria uma nova lista vazia (exige --list).
+                 'save': Adiciona um item a uma lista (exige --list e --item).
+                 'remove': Remove um item específico (exige --list e --item) ou a lista toda (se --item não for informado).
+            --list: O nome da lista (ex: "Compras", "Tarefas", "Filmes").
+            --item: O nome do item a ser manipulado (ex: "Leite", "Reunião").
+        - Exemplos:
+            - Quais listas eu tenho?: list_manager --mode list
+            - O que tem na lista de compras?: list_manager;--mode;list-items;--list;"Compras"
+            - Crie uma lista de filmes: list_manager;--mode;create;--list;"Filmes"
+            - Adicione Matrix na lista de filmes: list_manager;--mode;save;--list;"Filmes";--item;"Matrix"
+            - Remova leite da lista de compras: list_manager;--mode;remove;--list;"Compras";--item;"Leite"
+            - Apague a lista de tarefas: list_manager;--mode;remove;--list;"Tarefas"

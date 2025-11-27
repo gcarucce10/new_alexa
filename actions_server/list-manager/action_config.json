@@ -1,0 +1,5 @@
+{
+    "name": "list-manager",
+    "description": "Gerencia listas de itens diversas (compras, tarefas, filmes, etc) permitindo criar, listar, adicionar e remover itens.",
+    "version": "0.1"
+}

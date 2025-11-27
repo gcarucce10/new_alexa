@@ -1,0 +1,13 @@
+{
+    "resources": [
+        {
+            "name": "audio_player",          
+            "file-extension": "py"
+        },
+        {
+            "name": "reminder",
+            "file-extension": "py"
+        }
+        
+    ]
+}

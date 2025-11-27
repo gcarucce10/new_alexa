@@ -10,6 +10,8 @@ python-dotenv
 plyer
 requests
 azure-cognitiveservices-speech
+pyaudio
+pydub
 
 # Server dependencies
 # -------------------

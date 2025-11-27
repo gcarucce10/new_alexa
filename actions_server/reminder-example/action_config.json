@@ -1,0 +1,5 @@
+{
+    "name": "reminder_manager",
+    "description": "Gerencia agendamento de lembretes e verificação de horários.",
+    "version": "0.1"
+}

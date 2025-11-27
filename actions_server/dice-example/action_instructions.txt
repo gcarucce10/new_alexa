@@ -1,0 +1,7 @@
+    -(dice manager)
+        - Descrição: É um sorteador que simula um dado com n lados, sendo n > 1 e retorna o resultado. A chance de cair qualquer lado é a mesma.
+        - Uso: dice --sides (numero de lados) 
+            --sides: Número de lados do dado,
+        - Exemplos:
+            - Para rodar um dado de 6 faces: dice_manager;--sides;6
+            - Para rodar um dado de 20 faces: dice_manager;--sides;20

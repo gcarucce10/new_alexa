@@ -1,0 +1,11 @@
+{
+    "actions": [
+        {
+            "name": "dice_manager",
+            "description": "Simula um dado com n lados e retorna o resultado.",
+            "instructions": "    -(dice manager)\n        - Descrição: É um sorteador que simula um dado com n lados, sendo n > 1 e retorna o resultado. A chance de cair qualquer lado é a mesma.\n        - Uso: dice --sides (numero de lados) \n            --sides: Número de lados do dado,\n        - Exemplos:\n            - Para rodar um dado de 6 faces: dice_manager --sides 6\n            - Para rodar um dado de 20 faces: dice_manager --sides 20\n\n",
+            "version": "0.0",
+            "endpoint": "http://localhost:5002"
+        }
+    ]
+}

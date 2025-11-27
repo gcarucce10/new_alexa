@@ -1,0 +1,67 @@
+[
+    {
+        "message": "Reunião com a equipe",
+        "time": "2023-11-25 15:30",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 21:14",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 21:21",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 21:21",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 21:27",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta 1 MIN",
+        "time": "2025-11-25 21:29",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta 5 MIN",
+        "time": "2025-11-25 21:33",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 21:29",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta 1 MIN",
+        "time": "2025-11-25 21:31",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta 5 MIN",
+        "time": "2025-11-25 21:35",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta Imediato",
+        "time": "2025-11-25 22:49",
+        "status": "sent"
+    },
+    {
+        "message": "Teste de Alerta 1 MIN",
+        "time": "2025-11-25 22:51",
+        "status": "pending"
+    },
+    {
+        "message": "Teste de Alerta 5 MIN",
+        "time": "2025-11-25 22:55",
+        "status": "pending"
+    }
+]
